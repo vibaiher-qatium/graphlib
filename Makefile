@@ -67,7 +67,7 @@ $(BUILD_DIR)/$(MOD).core.js: index.js $(SRC_FILES) | unit-test
 $(BUILD_DIR)/$(MOD).core.min.js: $(BUILD_DIR)/$(MOD).core.js
 	@$(UGLIFY) $< --comments '@license' > $@
 
-dist: $(BUILD_FILES) | bower.json test
+dist: $(BUILD_FILES)
 	@rm -rf $@
 	@mkdir -p $@
 	@cp $^ dist
