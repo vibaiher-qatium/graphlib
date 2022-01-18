@@ -39,7 +39,7 @@ module.exports = {
 };
 
 },{"./lib":17,"./lib/alg":8,"./lib/json":18}],2:[function(require,module,exports){
-var lodash = require("../lodash");
+var _ = require("../lodash");
 
 module.exports = components;
 
@@ -49,14 +49,14 @@ function components(g) {
   var cmpt;
 
   function dfs(v) {
-    if (lodash.has(visited, v)) return;
+    if (_.has(visited, v)) return;
     visited[v] = true;
     cmpt.push(v);
-    lodash.each(g.successors(v), dfs);
-    lodash.each(g.predecessors(v), dfs);
+    _.each(g.successors(v), dfs);
+    _.each(g.predecessors(v), dfs);
   }
 
-  lodash.each(g.nodes(), function(v) {
+  _.each(g.nodes(), function(v) {
     cmpt = [];
     dfs(v);
     if (cmpt.length) {
@@ -68,7 +68,7 @@ function components(g) {
 }
 
 },{"../lodash":19}],3:[function(require,module,exports){
-var lodash = require("../lodash");
+var _ = require("../lodash");
 
 module.exports = dfs;
 
@@ -81,7 +81,7 @@ module.exports = dfs;
  * Order must be one of "pre" or "post".
  */
 function dfs(g, vs, order) {
-  if (!lodash.isArray(vs)) {
+  if (!_.isArray(vs)) {
     vs = [vs];
   }
 
@@ -89,7 +89,7 @@ function dfs(g, vs, order) {
 
   var acc = [];
   var visited = {};
-  lodash.each(vs, function(v) {
+  _.each(vs, function(v) {
     if (!g.hasNode(v)) {
       throw new Error("Graph does not have node: " + v);
     }
@@ -100,11 +100,11 @@ function dfs(g, vs, order) {
 }
 
 function doDfs(g, v, postorder, visited, navigation, acc) {
-  if (!lodash.has(visited, v)) {
+  if (!_.has(visited, v)) {
     visited[v] = true;
 
     if (!postorder) { acc.push(v); }
-    lodash.each(navigation(v), function(w) {
+    _.each(navigation(v), function(w) {
       doDfs(g, w, postorder, visited, navigation, acc);
     });
     if (postorder) { acc.push(v); }
@@ -113,23 +113,23 @@ function doDfs(g, v, postorder, visited, navigation, acc) {
 
 },{"../lodash":19}],4:[function(require,module,exports){
 var dijkstra = require("./dijkstra");
-var lodash = require("../lodash");
+var _ = require("../lodash");
 
 module.exports = dijkstraAll;
 
 function dijkstraAll(g, weightFunc, edgeFunc) {
-  return lodash.transform(g.nodes(), function(acc, v) {
+  return _.transform(g.nodes(), function(acc, v) {
     acc[v] = dijkstra(g, v, weightFunc, edgeFunc);
   }, {});
 }
 
 },{"../lodash":19,"./dijkstra":5}],5:[function(require,module,exports){
-var lodash = require("../lodash");
+var _ = require("../lodash");
 var PriorityQueue = require("../data/priority-queue");
 
 module.exports = dijkstra;
 
-var DEFAULT_WEIGHT_FUNC = lodash.constant(1);
+var DEFAULT_WEIGHT_FUNC = _.constant(1);
 
 function dijkstra(g, source, weightFn, edgeFn) {
   return runDijkstra(g, String(source),
@@ -294,7 +294,7 @@ function preorder(g, vs) {
 }
 
 },{"./dfs":3}],12:[function(require,module,exports){
-var lodash = require("../lodash");
+var _ = require("../lodash");
 var Graph = require("../graph");
 var PriorityQueue = require("../data/priority-queue");
 
@@ -322,7 +322,7 @@ function prim(g, weightFunc) {
     return result;
   }
 
-  lodash.each(g.nodes(), function(v) {
+  _.each(g.nodes(), function(v) {
     pq.add(v, Number.POSITIVE_INFINITY);
     result.setNode(v);
   });
@@ -333,7 +333,7 @@ function prim(g, weightFunc) {
   var init = false;
   while (pq.size() > 0) {
     v = pq.removeMin();
-    if (lodash.has(parents, v)) {
+    if (_.has(parents, v)) {
       result.setEdge(v, parents[v]);
     } else if (init) {
       throw new Error("Input graph is not connected: " + g);
@@ -348,7 +348,7 @@ function prim(g, weightFunc) {
 }
 
 },{"../data/priority-queue":15,"../graph":16,"../lodash":19}],13:[function(require,module,exports){
-var lodash = require("../lodash");
+var _ = require("../lodash");
 
 module.exports = tarjan;
 
@@ -367,7 +367,7 @@ function tarjan(g) {
     stack.push(v);
 
     g.successors(v).forEach(function(w) {
-      if (!lodash.has(visited, w)) {
+      if (!_.has(visited, w)) {
         dfs(w);
         entry.lowlink = Math.min(entry.lowlink, visited[w].lowlink);
       } else if (visited[w].onStack) {
@@ -388,7 +388,7 @@ function tarjan(g) {
   }
 
   g.nodes().forEach(function(v) {
-    if (!lodash.has(visited, v)) {
+    if (!_.has(visited, v)) {
       dfs(v);
     }
   });
@@ -397,7 +397,7 @@ function tarjan(g) {
 }
 
 },{"../lodash":19}],14:[function(require,module,exports){
-var lodash = require("../lodash");
+var _ = require("../lodash");
 
 module.exports = topsort;
 topsort.CycleException = CycleException;
@@ -408,22 +408,22 @@ function topsort(g) {
   var results = [];
 
   function visit(node) {
-    if (lodash.has(stack, node)) {
+    if (_.has(stack, node)) {
       throw new CycleException();
     }
 
-    if (!lodash.has(visited, node)) {
+    if (!_.has(visited, node)) {
       stack[node] = true;
       visited[node] = true;
-      lodash.each(g.predecessors(node), visit);
+      _.each(g.predecessors(node), visit);
       delete stack[node];
       results.push(node);
     }
   }
 
-  lodash.each(g.sinks(), visit);
+  _.each(g.sinks(), visit);
 
-  if (lodash.size(visited) !== g.nodeCount()) {
+  if (_.size(visited) !== g.nodeCount()) {
     throw new CycleException();
   }
 
@@ -433,7 +433,7 @@ function topsort(g) {
 function CycleException() {}
 CycleException.prototype = new Error(); // must be an instance of Error to pass testing
 },{"../lodash":19}],15:[function(require,module,exports){
-var lodash = require("../lodash");
+var _ = require("../lodash");
 
 module.exports = PriorityQueue;
 
@@ -467,7 +467,7 @@ PriorityQueue.prototype.keys = function() {
  * Returns `true` if **key** is in the queue and `false` if not.
  */
 PriorityQueue.prototype.has = function(key) {
-  return lodash.has(this._keyIndices, key);
+  return _.has(this._keyIndices, key);
 };
 
 /**
@@ -505,7 +505,7 @@ PriorityQueue.prototype.min = function() {
 PriorityQueue.prototype.add = function(key, priority) {
   var keyIndices = this._keyIndices;
   key = String(key);
-  if (!lodash.has(keyIndices, key)) {
+  if (!_.has(keyIndices, key)) {
     var arr = this._arr;
     var index = arr.length;
     keyIndices[key] = index;
@@ -589,7 +589,7 @@ PriorityQueue.prototype._swap = function(i, j) {
 },{"../lodash":19}],16:[function(require,module,exports){
 "use strict";
 
-var lodash = require("./lodash");
+var _ = require("./lodash");
 
 module.exports = Graph;
 
@@ -608,18 +608,18 @@ var EDGE_KEY_DELIM = "\x01";
 //    we're going to get to a performant hashtable in JavaScript.
 
 function Graph(opts) {
-  this._isDirected = lodash.has(opts, "directed") ? opts.directed : true;
-  this._isMultigraph = lodash.has(opts, "multigraph") ? opts.multigraph : false;
-  this._isCompound = lodash.has(opts, "compound") ? opts.compound : false;
+  this._isDirected = _.has(opts, "directed") ? opts.directed : true;
+  this._isMultigraph = _.has(opts, "multigraph") ? opts.multigraph : false;
+  this._isCompound = _.has(opts, "compound") ? opts.compound : false;
 
   // Label for the graph itself
   this._label = undefined;
 
   // Defaults to be set when creating a new node
-  this._defaultNodeLabelFn = lodash.constant(undefined);
+  this._defaultNodeLabelFn = _.constant(undefined);
 
   // Defaults to be set when creating a new edge
-  this._defaultEdgeLabelFn = lodash.constant(undefined);
+  this._defaultEdgeLabelFn = _.constant(undefined);
 
   // v -> label
   this._nodes = {};
@@ -686,8 +686,8 @@ Graph.prototype.graph = function() {
 /* === Node functions ========== */
 
 Graph.prototype.setDefaultNodeLabel = function(newDefault) {
-  if (!lodash.isFunction(newDefault)) {
-    newDefault = lodash.constant(newDefault);
+  if (!_.isFunction(newDefault)) {
+    newDefault = _.constant(newDefault);
   }
   this._defaultNodeLabelFn = newDefault;
   return this;
@@ -698,27 +698,27 @@ Graph.prototype.nodeCount = function() {
 };
 
 Graph.prototype.nodes = function() {
-  return lodash.keys(this._nodes);
+  return _.keys(this._nodes);
 };
 
 Graph.prototype.sources = function() {
   var self = this;
-  return lodash.filter(this.nodes(), function(v) {
-    return lodash.isEmpty(self._in[v]);
+  return _.filter(this.nodes(), function(v) {
+    return _.isEmpty(self._in[v]);
   });
 };
 
 Graph.prototype.sinks = function() {
   var self = this;
-  return lodash.filter(this.nodes(), function(v) {
-    return lodash.isEmpty(self._out[v]);
+  return _.filter(this.nodes(), function(v) {
+    return _.isEmpty(self._out[v]);
   });
 };
 
 Graph.prototype.setNodes = function(vs, value) {
   var args = arguments;
   var self = this;
-  lodash.each(vs, function(v) {
+  _.each(vs, function(v) {
     if (args.length > 1) {
       self.setNode(v, value);
     } else {
@@ -729,7 +729,7 @@ Graph.prototype.setNodes = function(vs, value) {
 };
 
 Graph.prototype.setNode = function(v, value) {
-  if (lodash.has(this._nodes, v)) {
+  if (_.has(this._nodes, v)) {
     if (arguments.length > 1) {
       this._nodes[v] = value;
     }
@@ -755,26 +755,26 @@ Graph.prototype.node = function(v) {
 };
 
 Graph.prototype.hasNode = function(v) {
-  return lodash.has(this._nodes, v);
+  return _.has(this._nodes, v);
 };
 
 Graph.prototype.removeNode =  function(v) {
   var self = this;
-  if (lodash.has(this._nodes, v)) {
+  if (_.has(this._nodes, v)) {
     var removeEdge = function(e) { self.removeEdge(self._edgeObjs[e]); };
     delete this._nodes[v];
     if (this._isCompound) {
       this._removeFromParentsChildList(v);
       delete this._parent[v];
-      lodash.each(this.children(v), function(child) {
+      _.each(this.children(v), function(child) {
         self.setParent(child);
       });
       delete this._children[v];
     }
-    lodash.each(lodash.keys(this._in[v]), removeEdge);
+    _.each(_.keys(this._in[v]), removeEdge);
     delete this._in[v];
     delete this._preds[v];
-    lodash.each(lodash.keys(this._out[v]), removeEdge);
+    _.each(_.keys(this._out[v]), removeEdge);
     delete this._out[v];
     delete this._sucs[v];
     --this._nodeCount;
@@ -787,13 +787,13 @@ Graph.prototype.setParent = function(v, parent) {
     throw new Error("Cannot set parent in a non-compound graph");
   }
 
-  if (lodash.isUndefined(parent)) {
+  if (_.isUndefined(parent)) {
     parent = GRAPH_NODE;
   } else {
     // Coerce parent to string
     parent += "";
     for (var ancestor = parent;
-      !lodash.isUndefined(ancestor);
+      !_.isUndefined(ancestor);
       ancestor = this.parent(ancestor)) {
       if (ancestor === v) {
         throw new Error("Setting " + parent+ " as parent of " + v +
@@ -825,14 +825,14 @@ Graph.prototype.parent = function(v) {
 };
 
 Graph.prototype.children = function(v) {
-  if (lodash.isUndefined(v)) {
+  if (_.isUndefined(v)) {
     v = GRAPH_NODE;
   }
 
   if (this._isCompound) {
     var children = this._children[v];
     if (children) {
-      return lodash.keys(children);
+      return _.keys(children);
     }
   } else if (v === GRAPH_NODE) {
     return this.nodes();
@@ -844,21 +844,21 @@ Graph.prototype.children = function(v) {
 Graph.prototype.predecessors = function(v) {
   var predsV = this._preds[v];
   if (predsV) {
-    return lodash.keys(predsV);
+    return _.keys(predsV);
   }
 };
 
 Graph.prototype.successors = function(v) {
   var sucsV = this._sucs[v];
   if (sucsV) {
-    return lodash.keys(sucsV);
+    return _.keys(sucsV);
   }
 };
 
 Graph.prototype.neighbors = function(v) {
   var preds = this.predecessors(v);
   if (preds) {
-    return lodash.union(preds, this.successors(v));
+    return _.union(preds, this.successors(v));
   }
 };
 
@@ -882,13 +882,13 @@ Graph.prototype.filterNodes = function(filter) {
   copy.setGraph(this.graph());
 
   var self = this;
-  lodash.each(this._nodes, function(value, v) {
+  _.each(this._nodes, function(value, v) {
     if (filter(v)) {
       copy.setNode(v, value);
     }
   });
 
-  lodash.each(this._edgeObjs, function(e) {
+  _.each(this._edgeObjs, function(e) {
     if (copy.hasNode(e.v) && copy.hasNode(e.w)) {
       copy.setEdge(e, self.edge(e));
     }
@@ -908,7 +908,7 @@ Graph.prototype.filterNodes = function(filter) {
   }
 
   if (this._isCompound) {
-    lodash.each(copy.nodes(), function(v) {
+    _.each(copy.nodes(), function(v) {
       copy.setParent(v, findParent(v));
     });
   }
@@ -919,8 +919,8 @@ Graph.prototype.filterNodes = function(filter) {
 /* === Edge functions ========== */
 
 Graph.prototype.setDefaultEdgeLabel = function(newDefault) {
-  if (!lodash.isFunction(newDefault)) {
-    newDefault = lodash.constant(newDefault);
+  if (!_.isFunction(newDefault)) {
+    newDefault = _.constant(newDefault);
   }
   this._defaultEdgeLabelFn = newDefault;
   return this;
@@ -931,13 +931,13 @@ Graph.prototype.edgeCount = function() {
 };
 
 Graph.prototype.edges = function() {
-  return lodash.values(this._edgeObjs);
+  return _.values(this._edgeObjs);
 };
 
 Graph.prototype.setPath = function(vs, value) {
   var self = this;
   var args = arguments;
-  lodash.reduce(vs, function(v, w) {
+  _.reduce(vs, function(v, w) {
     if (args.length > 1) {
       self.setEdge(v, w, value);
     } else {
@@ -977,19 +977,19 @@ Graph.prototype.setEdge = function() {
 
   v = "" + v;
   w = "" + w;
-  if (!lodash.isUndefined(name)) {
+  if (!_.isUndefined(name)) {
     name = "" + name;
   }
 
   var e = edgeArgsToId(this._isDirected, v, w, name);
-  if (lodash.has(this._edgeLabels, e)) {
+  if (_.has(this._edgeLabels, e)) {
     if (valueSpecified) {
       this._edgeLabels[e] = value;
     }
     return this;
   }
 
-  if (!lodash.isUndefined(name) && !this._isMultigraph) {
+  if (!_.isUndefined(name) && !this._isMultigraph) {
     throw new Error("Cannot set a named edge when isMultigraph = false");
   }
 
@@ -1026,7 +1026,7 @@ Graph.prototype.hasEdge = function(v, w, name) {
   var e = (arguments.length === 1
     ? edgeObjToId(this._isDirected, arguments[0])
     : edgeArgsToId(this._isDirected, v, w, name));
-  return lodash.has(this._edgeLabels, e);
+  return _.has(this._edgeLabels, e);
 };
 
 Graph.prototype.removeEdge = function(v, w, name) {
@@ -1051,22 +1051,22 @@ Graph.prototype.removeEdge = function(v, w, name) {
 Graph.prototype.inEdges = function(v, u) {
   var inV = this._in[v];
   if (inV) {
-    var edges = lodash.values(inV);
+    var edges = _.values(inV);
     if (!u) {
       return edges;
     }
-    return lodash.filter(edges, function(edge) { return edge.v === u; });
+    return _.filter(edges, function(edge) { return edge.v === u; });
   }
 };
 
 Graph.prototype.outEdges = function(v, w) {
   var outV = this._out[v];
   if (outV) {
-    var edges = lodash.values(outV);
+    var edges = _.values(outV);
     if (!w) {
       return edges;
     }
-    return lodash.filter(edges, function(edge) { return edge.w === w; });
+    return _.filter(edges, function(edge) { return edge.w === w; });
   }
 };
 
@@ -1098,7 +1098,7 @@ function edgeArgsToId(isDirected, v_, w_, name) {
     w = tmp;
   }
   return v + EDGE_KEY_DELIM + w + EDGE_KEY_DELIM +
-             (lodash.isUndefined(name) ? DEFAULT_EDGE_NAME : name);
+             (_.isUndefined(name) ? DEFAULT_EDGE_NAME : name);
 }
 
 function edgeArgsToObj(isDirected, v_, w_, name) {
@@ -1128,7 +1128,7 @@ module.exports = {
 };
 
 },{"./graph":16,"./version":20}],18:[function(require,module,exports){
-var lodash = require("./lodash");
+var _ = require("./lodash");
 var Graph = require("./graph");
 
 module.exports = {
@@ -1146,21 +1146,21 @@ function write(g) {
     nodes: writeNodes(g),
     edges: writeEdges(g)
   };
-  if (!lodash.isUndefined(g.graph())) {
-    json.value = lodash.clone(g.graph());
+  if (!_.isUndefined(g.graph())) {
+    json.value = _.clone(g.graph());
   }
   return json;
 }
 
 function writeNodes(g) {
-  return lodash.map(g.nodes(), function(v) {
+  return _.map(g.nodes(), function(v) {
     var nodeValue = g.node(v);
     var parent = g.parent(v);
     var node = { v: v };
-    if (!lodash.isUndefined(nodeValue)) {
+    if (!_.isUndefined(nodeValue)) {
       node.value = nodeValue;
     }
-    if (!lodash.isUndefined(parent)) {
+    if (!_.isUndefined(parent)) {
       node.parent = parent;
     }
     return node;
@@ -1168,13 +1168,13 @@ function writeNodes(g) {
 }
 
 function writeEdges(g) {
-  return lodash.map(g.edges(), function(e) {
+  return _.map(g.edges(), function(e) {
     var edgeValue = g.edge(e);
     var edge = { v: e.v, w: e.w };
-    if (!lodash.isUndefined(e.name)) {
+    if (!_.isUndefined(e.name)) {
       edge.name = e.name;
     }
-    if (!lodash.isUndefined(edgeValue)) {
+    if (!_.isUndefined(edgeValue)) {
       edge.value = edgeValue;
     }
     return edge;
@@ -1183,20 +1183,19 @@ function writeEdges(g) {
 
 function read(json) {
   var g = new Graph(json.options).setGraph(json.value);
-  lodash.each(json.nodes, function(entry) {
+  _.each(json.nodes, function(entry) {
     g.setNode(entry.v, entry.value);
     if (entry.parent) {
       g.setParent(entry.v, entry.parent);
     }
   });
-  lodash.each(json.edges, function(entry) {
+  _.each(json.edges, function(entry) {
     g.setEdge({ v: entry.v, w: entry.w, name: entry.name }, entry.value);
   });
   return g;
 }
 
 },{"./graph":16,"./lodash":19}],19:[function(require,module,exports){
-// eslint-disable-next-line no-redeclare
 /* global window */
 
 var lodash;
@@ -1233,7 +1232,7 @@ if (!lodash) {
 module.exports = lodash;
 
 },{"lodash/clone":undefined,"lodash/constant":undefined,"lodash/each":undefined,"lodash/filter":undefined,"lodash/has":undefined,"lodash/isArray":undefined,"lodash/isEmpty":undefined,"lodash/isFunction":undefined,"lodash/isUndefined":undefined,"lodash/keys":undefined,"lodash/map":undefined,"lodash/reduce":undefined,"lodash/size":undefined,"lodash/transform":undefined,"lodash/union":undefined,"lodash/values":undefined}],20:[function(require,module,exports){
-module.exports = '2.1.9-pre';
+module.exports = '2.1.8';
 
 },{}]},{},[1])(1)
 });
